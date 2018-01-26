@@ -10,18 +10,19 @@ import json
 class Reaper:
 
     URI = "https://api.threshingfloor.io"
+    #URI = "https://0mypl95t0j.execute-api.us-east-1.amazonaws.com/beta"
     PATTERN = '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
     PROG = re.compile(PATTERN)
 
     # This key is basic rate limited usage 
     # TODO: Revoke this key eventually
-    API_KEY = 'zrWIksWAUj7RB5EKAQwid1xuJ6KdcCPJ9CnJQiBL'
+    API_KEY = 'XCX8a4r3fXg8UGnq7CsJ7yFMTK3rGd48KN68a6h0'
 
     def __init__(self, args):
         self.filename = args.filename
 
-        self.ports = [{'port': 80, 'proto': 'tcp'}, {'port': 8080, 'proto': 'tcp'}]
-        self.scans = self._extractIps(self.filename)
+        self.ports = [{'port': 80, 'protocol': 'tcp'}, {'port': 8080, 'protocol': 'tcp'}]
+        self.ips = self._extractIps(self.filename)
 
         self.filter = self.queryApi()
 
@@ -49,27 +50,28 @@ class Reaper:
 
 
     def queryApi(self, uri=URI):
-        CHUNKSIZE = 100
+        CHUNKSIZE = 1000
         body = {}
         results = []
 
-        for i in range(0, len(self.scans), CHUNKSIZE):
-            body['scans'] = self.scans[i:i+CHUNKSIZE]
+        body['ports'] = self.ports
+
+        for i in range(0, len(self.ips), CHUNKSIZE):
+            body['ips'] = self.ips[i:i+CHUNKSIZE]
 
             # TODO: Goes over total ammount
             #print("[+] Querying items " + str(i+CHUNKSIZE) + " of " + str(len(self.scans)))
 
             # Send the request with scan items
-            response = requests.post(uri + '/reducer/scans', data=json.dumps(body), headers={'XAPIKEY_HEADER': self.API_KEY}).json()
+            response = requests.post(uri + '/reducer/seen', data=json.dumps(body), headers={'XAPIKEY_HEADER': self.API_KEY}).json()
 
-            for item in response['scans']:
-                results.append(item['ip'])
+            for item in response['ips']:
+                results.append(item)
 
         return results
 
     def _extractIps(self, filename):
-        ipcache = []
-        scans = []
+        ips = []
 
         with open(filename, 'r') as f:
             # Read each line
@@ -80,16 +82,10 @@ class Reaper:
                     record = {}
 
                     # If we haven't seen it already, add it to the list of scans
-                    if ip not in ipcache:
-                        ipcache.append(ip)
+                    if ip not in ips:
+                        ips.append(ip)
 
-                        record['ip'] = ip
-                        record['ports'] = self.ports
-
-                        # Add it to the list of scans
-                        scans.append(record)
-
-        return scans
+        return ips
 
     def _extractIp(self, line):
         ips = []
