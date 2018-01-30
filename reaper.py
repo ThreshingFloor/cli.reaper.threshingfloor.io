@@ -21,12 +21,12 @@ class Reaper:
     def __init__(self, args):
         self.filename = args.filename
 
-        self.ports = [{'port': 80, 'protocol': 'tcp'}, {'port': 8080, 'protocol': 'tcp'}]
+        self.ports = [{'port': 22, 'protocol': 'tcp'}, {'port': 23, 'protocol': 'tcp'}]
         self.ips = self._extractIps(self.filename)
 
         self.filter = self.queryApi()
 
-        #print self.filter
+        #print self.ips
 
     def reduce(self, ):
         ipcache = []
@@ -46,11 +46,12 @@ class Reaper:
                         printLine = False
 
                 if printLine:
+                    #pass
                     print(line.strip())
 
 
     def queryApi(self, uri=URI):
-        CHUNKSIZE = 1000
+        CHUNKSIZE = 100
         body = {}
         results = []
 
@@ -91,11 +92,12 @@ class Reaper:
         ips = []
 
         # See if the line matches for any ip addresses
-        res = self.PROG.match(line)
+        res = self.PROG.search(line)
 
         # Get each ip in the line
-        for num in range(0, len(res.groups())):
-            ips.append(res.group(num))
+        if res is not None:
+            for num in range(0, len(res.groups())):
+                ips.append(res.group(num))
         
         return ips
 
