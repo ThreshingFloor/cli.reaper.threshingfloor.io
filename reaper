@@ -8,10 +8,13 @@ from argparse import ArgumentParser
 import sys
 import ntpath
 import time
+import urllib
 
 from libtf.logparsers import *
 
 BASE_URI = "https://api.threshingfloor.io"
+
+config = {}
 
 def main():
 
@@ -134,6 +137,8 @@ def main():
         # Make sure the user has not opted out
         if 'REPORT_STATS' in config and config['REPORT_STATS'] == True:
             reportStatistics(logfile, config['BASE_URI'], config['API_KEY'])
+            #def ga(t, ec, ea, el, cid, ev=False, v=1, tid='UA-115550236-2'):
+            ga('event', 'CLI', 'execution', 'CLI Executed', config['API_KEY'])
 
     # If we can't report stats, too bad for us I guess
     except TFAPIUnavailable as e:
@@ -221,6 +226,8 @@ def reportStatistics(logfile, baseUri, api_key):
 
     try:
         r = requests.post(baseUri + API_ENDPOINT, data = json.dumps(postData), headers={'x-api-key': api_key})
+        ga('event', 'CLI', 'statistics', 'CLI Stats', config['API_KEY'], extras=postData)
+
     except requests.exceptions.ConnectionError as e:
         raise TFAPIUnavailable("The ThreshingFloor API appears to be unavailable.")
 
@@ -302,7 +309,10 @@ def configureCli(configFile):
             print('Storing ThreshingFloor API key in ~/.tf.cfg')
             f.write(json.dumps(config))
     except Exception as e:
-        exit('Unable to write confiuration file.')
+        exit('Unable to write configuration file.')
+
+
+    ga('event', 'CLI', 'configured', 'CLI Configured', config['API_KEY'])
 
     return config
 
@@ -401,6 +411,31 @@ def parseArgs():
     # TODO: Verify that all variable combinations are correct
 
     return parser.parse_args()
+
+def ga(t, ec, ea, el, cid, ev=False, v=1, tid='UA-115550236-2', extras={}):
+
+    params = {
+        't': t,
+        'ec': ec,
+        'ea': ea, 
+        'el': el,
+        'v': v,
+        'tid': tid,
+        'cid': cid
+        }
+
+    params.update(extras)
+
+    if ev:
+        params['ev'] = ev
+
+    uri = "https://www.google-analytics.com/collect"
+
+    try:
+        r = requests.post(uri, data = urllib.urlencode(params), headers={'referer': 'http://cli.threshingfloor.io'})
+    except Exception as e:
+        print(e)
+
 
 def prompt(message, errormessage, isvalid=lambda v: True):
     """Prompt for input given a message and return that value after verifying the input.
