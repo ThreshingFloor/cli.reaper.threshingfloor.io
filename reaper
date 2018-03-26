@@ -226,7 +226,7 @@ def reportStatistics(logfile, baseUri, api_key):
 
     try:
         r = requests.post(baseUri + API_ENDPOINT, data = json.dumps(postData), headers={'x-api-key': api_key})
-        ga('event', 'CLI', 'statistics', 'CLI Stats', config['API_KEY'], extras=postData)
+        ga('event', 'CLI', 'statistics', 'CLI Stats', api_key, extras=postData)
 
     except requests.exceptions.ConnectionError as e:
         raise TFAPIUnavailable("The ThreshingFloor API appears to be unavailable.")
@@ -311,7 +311,7 @@ def configureCli(configFile):
     except Exception as e:
         exit('Unable to write configuration file.')
 
-
+    print('cool!!!')
     ga('event', 'CLI', 'configured', 'CLI Configured', config['API_KEY'])
 
     return config
