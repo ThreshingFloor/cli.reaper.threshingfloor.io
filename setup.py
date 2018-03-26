@@ -34,7 +34,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='tf-reaper',
-    version = '0.0.5',
+    version = '0.0.6',
     license = 'MIT',
     author = 'Threshing Floor Security, LLC',
     author_email = 'info@threshingfloor.io',
