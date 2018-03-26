@@ -311,7 +311,6 @@ def configureCli(configFile):
     except Exception as e:
         exit('Unable to write configuration file.')
 
-    print('cool!!!')
     ga('event', 'CLI', 'configured', 'CLI Configured', config['API_KEY'])
 
     return config
