@@ -8,7 +8,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='tf-reaper',
-    version = '0.0.7',
+    version = '0.0.8',
     license = 'MIT',
     author = 'Threshing Floor Security, LLC',
     author_email = 'info@threshingfloor.io',
@@ -21,16 +21,17 @@ setup(
     )
 
 message = """
+
 __________                                   
-\______   \ ____ _____  ______   ___________ 
- |       _// __ \\__  \ \____ \_/ __ \_  __ \
- |    |   \  ___/ / __ \|  |_> >  ___/|  | \/
- |____|_  /\___  >____  /   __/ \___  >__|   
-        \/     \/     \/|__|        \/       
+\______   \ ____ _____  ______   ___________    
+ |       _// __ \\\\__  \ \\____ \\_/ __ \\_  __ \\ 
+ |    |   \  ___/ / __ \|  |_> >  ___/|  | \/ 
+ |____|_  /\___  >____  /   __/ \___  >__|    
+        \/     \/     \/|__|        \/        
 
 If you do not have an API key, request one at info@threshingfloor.io
 
-To get started, run \'\$ reaper -h\'
+To get started, run \'$ reaper -h\'
 """
 
 print(message)
