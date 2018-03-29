@@ -1,6 +1,6 @@
 # Reaper CLI Quickstart Guide 
 
-![Threshing Floor Security logo](https://s3.amazonaws.com/static.threshingfloor.io/threshingfloor_main_logo_transp.png)
+<img src="https://s3.amazonaws.com/static.threshingfloor.io/threshingfloor_main_logo_transp.png" width="50%" height="50%">
 
 The Reaper CLI helps you separate the signal from the noise in your logfiles. If you are running a service that faces the internet, you likely see thousands of scans, bots, and brute force attempts every day. These scans clog up your log files, and make it hard to find legitimate events of interest.
 
