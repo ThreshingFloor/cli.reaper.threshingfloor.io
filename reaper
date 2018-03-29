@@ -8,8 +8,11 @@ from argparse import ArgumentParser
 import sys
 import ntpath
 import time
-import urllib
 
+try:
+    import urllib.parse as urllib
+except ImportError:
+    import urllib
 from libtf.logparsers import *
 
 BASE_URI = "https://api.threshingfloor.io"
@@ -367,7 +370,7 @@ def output(logfile, shownoise, outfile):
     else:
         # Print to screen
         for log in logfile.reduce(shownoise):
-            print log
+            print(log)
 
 
 ################################
@@ -448,7 +451,7 @@ def prompt(message, errormessage, isvalid=lambda v: True):
     while res is None:
         res = input(str(message)+' ')
         if not isvalid(res):
-            print str(errormessage)
+            print(str(errormessage))
             res = None
     return res
 
