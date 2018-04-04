@@ -79,7 +79,7 @@ def main():
             except TFException as e:
 
                 # TODO: If we have a port in this block, we should try generic with the ports and protos specified
-                if args.port is not None:
+                if args.ports is not None:
                     args.type = 'generic'
                 else:
                     sys.stderr.write('[+] {ERROR}\n'.format(ERROR=e))
