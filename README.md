@@ -2,7 +2,6 @@
 
 <img src="https://s3.amazonaws.com/static.threshingfloor.io/threshingfloor_main_logo_transp.png" width="50%" height="50%">
 
-
 The Reaper CLI helps you separate the signal from the noise in your logfiles. If you are running a service that faces the internet, you likely see thousands of scans, bots, and brute force attempts every day. These scans clog up your log files, and make it hard to find legitimate events of interest.
 
 The Reaper CLI is a utility that leverages the ThreshingFloor API to reduce noisy entries from your log files. This tool is currently in closed ALPHA.
@@ -63,14 +62,14 @@ optional arguments:
 
 ## Examples
 
-Output a reduced auth log to the screen::
+Output a reduced auth log to the screen:
 
 ```
     $ reaper /var/log/auth.log
     [Results not shown]
 ```
 
-Output a reduced auth log to a file and print aggregate statistics to the screen::
+Output a reduced auth log to a file and print aggregate statistics to the screen:
 
 ```
     $ reaper -o ~/auth.log.reduced -s /var/log/auth.log
@@ -80,20 +79,20 @@ Output a reduced auth log to a file and print aggregate statistics to the screen
     The input file was reduced to 27.2% of it's original size.
 ```
 
-Output a reduced HTTP access log to a file::
+Output a reduced HTTP access log to a file:
 
 ```
     $ reaper -t http -o ~/access.log.reduced /etc/log/access.log
 ```
 
-Output lines from an HTTP access log that ThreshingFloor believed to be bots, crawlers, or other internet noise::
+Output lines from an HTTP access log that ThreshingFloor believed to be bots, crawlers, or other internet noise:
 
 ```
     $ cat /etc/log/access.log | reaper -t http -n
     [Results not shown]
 ```
 
-Show statistics for reducing an access log by traffic seen by ThreshingFloor on TCP port 80, and do not display results to the screen::
+Show statistics for reducing an access log by traffic seen by ThreshingFloor on TCP port 80, and do not display results to the screen:
 
 ```
     $ reaper -t generic -p 80:tcp --dry-run test/data/access.log.txt
@@ -101,5 +100,5 @@ Show statistics for reducing an access log by traffic seen by ThreshingFloor on 
 
 ## Privacy Notice
 
-In order to reduce noise from your log files, we need to collect metadata from those file. This includes IP addresses, usernames, user agent strings, referrers, and request URI's. We use this metadata to enchance the results of our API. If you have sensitive data in your log files or prefer to not share this data with us, contact us at info@threshingfloor.io about a private on-premesis solution.
+In order to reduce noise from your log files, we need to collect metadata from those file. This includes IP addresses, usernames, user agent strings, referrers, and request URIs. We use this metadata to enchance the results of our API. If you have sensitive data in your log files or prefer to not share this data with us, contact us at info@threshingfloor.io about a private on-premesis solution.
 
