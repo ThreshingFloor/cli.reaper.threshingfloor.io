@@ -98,6 +98,21 @@ Show statistics for reducing an access log by traffic seen by ThreshingFloor on 
     $ reaper -t generic -p 80:tcp --dry-run test/data/access.log.txt
 ```
 
+# Development
+
+```bash
+# Setup virtualenv
+virtualenv env
+source env/bin/activate
+
+# Install package and development dependencies
+pip install -e .
+pip install -r requirements-dev.txt
+
+# Run tests
+nosetests
+```
+
 ## Privacy Notice
 
 In order to reduce noise from your log files, we need to collect metadata from those file. This includes IP addresses, usernames, user agent strings, referrers, and request URIs. We use this metadata to enchance the results of our API. If you have sensitive data in your log files or prefer to not share this data with us, contact us at info@threshingfloor.io about a private on-premesis solution.

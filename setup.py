@@ -8,17 +8,20 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='tf-reaper',
-    version = '0.0.10',
-    license = 'MIT',
-    author = 'Threshing Floor Security, LLC',
-    author_email = 'info@threshingfloor.io',
-    description = 'Threshing Floor CLI utility for analyzing log files for noise.',
-    long_description = long_description,
-    scripts = ['reaper'],
-    install_requires = ['libtf', 'requests'],
-    url = 'https://github.com/ThreshingFloor/cli.reaper.threshingfloor.io',
-    classifiers = ['Development Status :: 3 - Alpha'],
-    )
+    version='0.1.0',
+    license='MIT',
+    author='Threshing Floor Security, LLC',
+    author_email='info@threshingfloor.io',
+    description='Threshing Floor CLI utility for analyzing log files for noise.',
+    long_description=long_description,
+    entry_points={
+        'console_scripts': ['reaper=tf_reaper.reaper:main'],
+    },
+    packages=['tf_reaper'],
+    install_requires=['libtf>=0.1', 'requests>=2,<3', 'six'],
+    url='https://github.com/ThreshingFloor/cli.reaper.threshingfloor.io',
+    classifiers=['Development Status :: 3 - Alpha'],
+)
 
 message = """
 

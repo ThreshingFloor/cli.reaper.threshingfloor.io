@@ -13,8 +13,9 @@ defaults: &defaults
       - run:
           name: Run tests
           command: |
-            sudo pip install -r requirements.txt -r requirements-dev.txt
-            nosetests
+            sudo pip install -e .
+            sudo pip install -r requirements-dev.txt
+            nosetests --with-xunit --xunit-file=${CIRCLE_TEST_REPORTS}/nosetest.xml
       - store_test_results:
           path: /tmp/circleci-test-results
       - store_artifacts:
