@@ -14,6 +14,7 @@ defaults: &defaults
           name: Run tests
           command: |
             sudo pip install -r requirements.txt -r requirements-dev.txt
+            nosetests
       - store_test_results:
           path: /tmp/circleci-test-results
       - store_artifacts:
