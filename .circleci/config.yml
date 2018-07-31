@@ -1,0 +1,44 @@
+version: 2
+
+defaults: &defaults
+  parallelism: 1
+  working_directory: ~/ThreshingFloor/cli.reaper.threshingfloor.io
+  shell: /bin/bash --login -e
+  environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+  steps:
+      - checkout
+      - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+      - run:
+          name: Run tests
+          command: |
+            sudo pip install -r requirements.txt
+      - store_test_results:
+          path: /tmp/circleci-test-results
+      - store_artifacts:
+          path: /tmp/circleci-artifacts
+
+
+jobs:
+  test-3.7:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.7-stretch
+  test-3.6:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.6-stretch
+  test-2.7:
+    <<: *defaults
+    docker:
+      - image: circleci/python:2.7-stretch
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test-3.7
+      - test-3.6
+      - test-2.7
