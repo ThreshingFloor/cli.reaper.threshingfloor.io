@@ -13,7 +13,7 @@ defaults: &defaults
       - run:
           name: Run tests
           command: |
-            sudo pip install -r requirements.txt
+            sudo pip install -r requirements.txt -r requirements-dev.txt
       - store_test_results:
           path: /tmp/circleci-test-results
       - store_artifacts:
