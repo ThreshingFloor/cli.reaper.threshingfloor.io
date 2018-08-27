@@ -141,7 +141,7 @@ class ReaperFilter(object):
         noise_size = len(self.log_file.noisy_logs)
         quiet_size = len(self.log_file.quiet_logs)
 
-        stats_logger.info('{TOTAL_SIZE} lines were analyzed in this log file.'
+        stats_logger.info('{TOTAL_SIZE} lines were analyzed in this batch.'
                           .format(TOTAL_SIZE=total_size))
         stats_logger.info('{NOISE_SIZE} lines were determined to be noise by ThreshingFloor.'
                           .format(NOISE_SIZE=noise_size))
@@ -150,7 +150,7 @@ class ReaperFilter(object):
 
         if total_size:
             percent = "{0:0.01f}".format((int(quiet_size) / float(total_size)) * 100)
-            stats_logger.info("The input file was reduced to {PERCENT}% of its original size."
+            stats_logger.info("This batch was reduced to {PERCENT}% of its original size."
                               .format(PERCENT=percent))
 
     def _guess_type(self):

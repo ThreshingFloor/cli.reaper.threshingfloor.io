@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# Wrapper for development to reaper entry point script
-
-exec python -m tf_reaper.reaper "$@"
