@@ -36,7 +36,7 @@ class TestReaperStatisticsReporter(TFTestCase):
             mock_post.return_value = mock_response
             self.stats_reporter.report(self.log_file)
             self.assertTrue(mock_post.called)
-            expected_call = mock.call('http://localhost:8000/reducer/stats',
+            expected_call = mock.call('http://localhost:8000/v2/reducer/stats',
                                       headers={'x-api-key': '1111111111111111111111111111111111111111'},
                                       json={'lines_analyzed': 4,
                                             'API_KEY': '1111111111111111111111111111111111111111',

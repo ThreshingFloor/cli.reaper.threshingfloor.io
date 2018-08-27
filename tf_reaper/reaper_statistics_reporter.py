@@ -5,7 +5,7 @@ from .google_analytics import ga
 
 
 class ReaperStatisticsReporter(object):
-    api_endpoint = "/reducer/stats"
+    api_endpoint = "/v2/reducer/stats"
 
     def __init__(self, config):
         self.config = config
