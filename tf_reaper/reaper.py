@@ -9,28 +9,46 @@ from .reaper_filter import ReaperFilter
 
 
 def main():
-    args = parse_args()
-
-    if args.configure is True:
-        ReaperConfiguration.prompt_user(overwrite=True)
-        print('Reaper has been successfully configured.')
-        exit(0)
-
-    config = ReaperConfiguration.prompt_user()
-
-    if args.filename is not None:
-        stream = open(args.filename, 'r')
-        filename = args.filename
-    else:
-        stream = sys.stdin
-        filename = None
+    logger = logging.getLogger('tf-reaper')
+    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    formatter = logging.Formatter('[tf-reaper] [%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)s] %(message)s', )
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(logging.DEBUG)
+    logger.addHandler(console_handler)
 
     try:
-        ReaperFilter(config=config, stream=stream, filename=filename, log_type=args.type, show_noise=args.shownoise,
-                     output_file=args.outfile, show_stats=args.showstats, dry_run=args.dryrun, ports=args.ports).run()
-    finally:
-        if filename:
-            stream.close()
+        args = parse_args()
+
+        if args.configure is True:
+            ReaperConfiguration.prompt_user(overwrite=True)
+            print('Reaper has been successfully configured.')
+            exit(0)
+
+        config = ReaperConfiguration.prompt_user()
+
+        if args.filename is not None:
+            stream = open(args.filename, 'r')
+            filename = args.filename
+        else:
+            stream = sys.stdin
+            filename = None
+
+        try:
+            ReaperFilter(config=config, stream=stream, filename=filename, log_type=args.type, show_noise=args.shownoise,
+                         output_file=args.outfile, show_stats=args.showstats, dry_run=args.dryrun,
+                         ports=args.ports).run()
+        finally:
+            if filename:
+                stream.close()
+    except (TFException, TFLogParsingException) as e:
+        sys.stderr.write("\n\nFailed to parse: %s\n\n" % e)
+        exit(1)
+    except TFAPIUnavailable as e:
+        sys.stderr.write("\n\nFailed to contact ThreshingFloor API: %s\n\n" % e)
+        exit(1)
+    except KeyboardInterrupt as e:
+        exit()
 
 
 def parse_args():
@@ -64,24 +82,3 @@ def parse_args():
                         type=str, action='store', nargs='?')
 
     return parser.parse_args()
-
-
-if __name__ == '__main__':
-    logger = logging.getLogger('tf-reaper')
-    logger.setLevel(logging.DEBUG)
-    console_handler = logging.StreamHandler()
-    formatter = logging.Formatter('[tf-reaper] [%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)s] %(message)s',)
-    console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.INFO)
-    logger.addHandler(console_handler)
-
-    try:
-        main()
-    except (TFException, TFLogParsingException) as e:
-        sys.stderr.write("\n\nFailed to parse: %s\n\n" % e)
-        exit(1)
-    except TFAPIUnavailable as e:
-        sys.stderr.write("\n\nFailed to contact ThreshingFloor API: %s\n\n" % e)
-        exit(1)
-    except KeyboardInterrupt as e:
-        exit()

@@ -150,10 +150,10 @@ class TestReaperFilter(TFTestCase):
             with mock.patch.object(stats_logger, 'info') as mock_stats_logger:
                 reaper.run()
                 self.assertEqual(mock_stats_logger.call_args_list,
-                                 [mock.call('3 lines were analyzed in this log file.'),
+                                 [mock.call('3 lines were analyzed in this batch.'),
                                   mock.call('1 lines were determined to be noise by ThreshingFloor.'),
                                   mock.call('2 lines were not determined to be noise by ThreshingFloor.'),
-                                  mock.call('The input file was reduced to 66.7% of its original size.')])
+                                  mock.call('This batch was reduced to 66.7% of its original size.')])
 
         # Should be no output since dry run
         self.assertEqual(open(filename).read(), "")
