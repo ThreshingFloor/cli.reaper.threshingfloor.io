@@ -182,7 +182,14 @@ class ReaperFilter(object):
                     return
 
             signal.alarm(10)
-            first_10_from_stream = itertools.islice(self.stream, 10)
+            first_10_from_stream = []
+            for _ in range(0, 10):
+                line = None
+                while not line:
+                    line = self.stream.readline()
+                    if not line:
+                        time.sleep(1)
+                first_10_from_stream.append(line)
             log_lines = "".join(["%s" % line for line in first_10_from_stream])
             self.lines_from_guess_type = StringIO(log_lines)
             signal.alarm(0)
