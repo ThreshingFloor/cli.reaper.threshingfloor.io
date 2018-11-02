@@ -18,7 +18,7 @@ setup(
         'console_scripts': ['reaper=tf_reaper.reaper:main'],
     },
     packages=['tf_reaper'],
-    install_requires=['libtf>=0.1', 'requests>=2,<3', 'six'],
+    install_requires=['libtf>=0.1.2', 'requests>=2,<3', 'six'],
     url='https://github.com/ThreshingFloor/cli.reaper.threshingfloor.io',
     classifiers=['Development Status :: 3 - Alpha'],
 )

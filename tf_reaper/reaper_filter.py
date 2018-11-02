@@ -35,6 +35,7 @@ class ReaperFilter(object):
         if not hasattr(self.stream, 'readline'):
             self.stream = StringIO("\n".join(self.stream))
 
+        self.lines_from_guess_type = StringIO()
         self.filename = filename
         self.log_type = log_type
         self.ports = ports
@@ -59,9 +60,11 @@ class ReaperFilter(object):
         """
         counter = 0
         while True:
-            line = self.stream.readline()
+            line = self.lines_from_guess_type.readline()
             if not line:
-                break
+                line = self.stream.readline()
+                if not line:
+                    break
 
             counter += 1
             yield line
@@ -179,8 +182,16 @@ class ReaperFilter(object):
                     return
 
             signal.alarm(10)
-            first_10_from_stream = itertools.islice(self.stream, 10)
-            log_lines = "".join(["%s\n" % line for line in first_10_from_stream])
+            first_10_from_stream = []
+            for _ in range(0, 10):
+                line = None
+                while not line:
+                    line = self.stream.readline()
+                    if not line:
+                        time.sleep(1)
+                first_10_from_stream.append(line)
+            log_lines = "".join(["%s" % line for line in first_10_from_stream])
+            self.lines_from_guess_type = StringIO(log_lines)
             signal.alarm(0)
 
             try:

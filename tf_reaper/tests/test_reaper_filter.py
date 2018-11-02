@@ -1,5 +1,8 @@
 import json
+import sys
+from datetime import datetime, timedelta
 from tempfile import mkstemp
+from unittest import skip
 
 import mock
 import requests
@@ -33,15 +36,35 @@ class TestReaperFilter(TFTestCase):
         self.assertEqual(reaper.log_type, 'http')
 
     def test_can_guess_auth_log_if_type_not_specified_and_first_10_lines_in_10_seconds_matches_regex(self):
-        self.stream = ['Feb 20 21:54:44 localhost sshd[3402]: Accepted publickey for john from 199.2.2.2 port 63673 '
-                       'ssh2: RSA 39:33:99:e9:a0:dc:f2:33:a3:e5:72:3b:7c:3a:56:84']
+        self.stream = []
+        for _ in range(0, 10):
+            self.stream.append('Feb 20 21:54:44 localhost sshd[3402]: Accepted publickey for john from 199.2.2.2 port '
+                               '63673 ssh2: RSA 39:33:99:e9:a0:dc:f2:33:a3:e5:72:3b:7c:3a:56:84')
         reaper = ReaperFilter(self.config, self.stream)
         self.assertEqual(reaper.log_type, 'auth')
 
     def test_can_guess_http_log_if_type_not_specified_and_first_10_lines_in_10_seconds_matches_regex(self):
-        self.stream = ['192.168.1.20 - - [28/Jul/2006:10:27:10 -0300] "GET /cgi-bin/try/ HTTP/1.0" 200 3395']
-        reaper = ReaperFilter(self.config, self.stream)
+        self.stream = []
+        for _ in range(0, 5):
+            self.stream.append('192.168.1.20 - - [28/Jul/2006:10:27:10 -0300] "GET /cgi-bin/try/ HTTP/1.0" 200 3395')
+            self.stream.append('192.168.1.55 - - [28/Jul/2006:10:27:10 -0300] "GET /cgi-bin/try/ HTTP/1.0" 200 3395')
+        reaper = ReaperFilter(self.config, self.stream, dry_run=True)
         self.assertEqual(reaper.log_type, 'http')
+
+        mock_response = mock.MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = json.dumps({"ips": ["192.168.1.55"], "ports": []})
+
+        with mock.patch.object(requests, 'post', autospec=True) as mock_post:
+            mock_post.return_value = mock_response
+
+            with mock.patch.object(stats_logger, 'info') as mock_stats_logger:
+                reaper.run()
+                self.assertEqual(mock_stats_logger.call_args_list,
+                                 [mock.call('10 lines were analyzed in this batch.'),
+                                  mock.call('5 lines were determined to be noise by ThreshingFloor.'),
+                                  mock.call('5 lines were not determined to be noise by ThreshingFloor.'),
+                                  mock.call('This batch was reduced to 50.0% of its original size.')])
 
     def test_if_no_matches_in_first_10_lines_then_cannot_guess(self):
         self.stream = ['foo' for _ in range(0, 10)]
@@ -50,14 +73,15 @@ class TestReaperFilter(TFTestCase):
                                                   "Please specify a type with the -t flag."):
             ReaperFilter(self.config, self.stream)
 
-    # def test_if_no_10_seconds_then_cannot_guess(self):
-    #     self.stream = sys.stdin
-    #     start = datetime.now()
-    #     with self.assertRaisesRegexp(TFException, "Unable to automatically identify the log type because there are "
-    #                                               "not enough lines in the log stream. Please specify a type with the "
-    #                                               "-t flag."):
-    #         ReaperFilter(self.config, self.stream)
-    #         self.assertGreaterEqual(datetime.now() - start, timedelta(seconds=10))
+    @skip
+    def test_if_no_10_seconds_then_cannot_guess(self):
+        self.stream = sys.stdin
+        start = datetime.now()
+        with self.assertRaisesRegexp(TFException, "Unable to automatically identify the log type because there are "
+                                                  "not enough lines in the log stream. Please specify a type with the "
+                                                  "-t flag."):
+            ReaperFilter(self.config, self.stream)
+            self.assertGreaterEqual(datetime.now() - start, timedelta(seconds=10))
 
     def test_reaper_analyzes_in_batches_to_limit_memory_footprint(self):
         mock_response = mock.MagicMock()
